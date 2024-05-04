@@ -62,8 +62,52 @@ const showdata =asyncHandler( async (req, res) => {
     res.status(200).json(req.user)
 })
 
+const updateByEmail = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+    
+    // Verificar que se pase el correo electrónico
+    if (!email) {
+        res.status(400);
+        throw new Error('Falta el correo electrónico');
+    }
+    
+    // Buscar el usuario por correo electrónico
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        res.status(404);
+        throw new Error('Usuario no encontrado');
+    }
+
+    // No permitir que se actualice el correo electrónico
+    delete req.body.email;
+
+    // Actualizar los campos proporcionados
+    Object.assign(user, req.body);
+
+    // Guardar los cambios en la base de datos
+    await user.save();
+
+    res.status(200).json(user);
+});
+
+const deleteByEmail = asyncHandler(async (req, res) => {
+    const user = await User.findOne({ email: req.params.email });
+
+    if (!user) {
+        res.status(404);
+        throw new Error('El Correo electronico ingresado es incorrecto');
+    }
+
+    await User.deleteOne(user);
+
+    res.status(200).json({ mensaje: 'Usuario eliminado correctamente', email: req.params.email });
+});
+
 module.exports = {
     register,
     login,
-    showdata
+    showdata,
+    updateByEmail,
+    deleteByEmail
 }
