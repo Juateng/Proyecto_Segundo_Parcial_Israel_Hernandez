@@ -1,6 +1,6 @@
 
 import asyncHandler from "express-async-handler"
-import productosmodel, * as Producto from '../models/productosModel.js';
+import productosmodel from '../models/productosModel.js';
 import fs from "fs"
 
 //mostrar productos

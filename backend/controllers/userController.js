@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-const asyncHandler = require('express-async-handler')
-const User = require('../models/userModel')
+
+import asyncHandler from "express-async-handler"
+import userModel from "../models/userModel"
 
 const register =asyncHandler(async (req, res) => {
     //destructural objeto
@@ -14,7 +15,7 @@ const register =asyncHandler(async (req, res) => {
     }
 
     //verificar que el usuario
-    const userExiste = await User.findOne({email})
+    const userExiste = await userModel.findOne({email})
     if(userExiste){
         res.status(400)
         throw new Error('Ese usuario ya existe en la base de datos')
@@ -25,7 +26,7 @@ const register =asyncHandler(async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt)
 
     //crear el usuario
-    const user = await User.create({
+    const user = await userModel.create({
         name,
         email, 
         password: hashedPassword
@@ -38,7 +39,7 @@ const register =asyncHandler(async (req, res) => {
 const login =asyncHandler( async (req, res) => {
     const {email, password} = req.body
 
-    const user = await User.findOne({email})
+    const user = await userModel.findOne({email})
 
     if(user && (await bcrypt.compare(password, user.password))){
         res.status(200).json({
@@ -72,7 +73,7 @@ const updateByEmail = asyncHandler(async (req, res) => {
     }
     
     // Buscar el usuario por correo electrónico
-    const user = await User.findOne({ email });
+    const user = await userModel.findOne({ email });
 
     if (!user) {
         res.status(404);
@@ -92,22 +93,17 @@ const updateByEmail = asyncHandler(async (req, res) => {
 });
 
 const deleteByEmail = asyncHandler(async (req, res) => {
-    const user = await User.findOne({ email: req.params.email });
+    const user = await userModel.findOne({ email: req.params.email });
 
     if (!user) {
         res.status(404);
         throw new Error('El Correo electronico ingresado es incorrecto');
     }
 
-    await User.deleteOne(user);
+    await userModel.deleteOne(user);
 
     res.status(200).json({ mensaje: 'Usuario eliminado correctamente', email: req.params.email });
 });
 
-module.exports = {
-    register,
-    login,
-    showdata,
-    updateByEmail,
-    deleteByEmail
-}
+
+export {register,login,showdata,updateByEmail,deleteByEmail}

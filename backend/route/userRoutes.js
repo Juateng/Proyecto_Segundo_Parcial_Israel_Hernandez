@@ -1,8 +1,9 @@
-const express = require('express')
-const router = express.Router()
-const {protect} = require('../middleware/authMiddleware')
+import express from 'express'
+import { login, register, showdata, updateByEmail, deleteByEmail } from '../controllers/userController.js'
+import multer from "multer"
+import router from "./route/productosRoutes.js";
+import protect from "../middleware/authMiddleware.js"
 
-const {login, register, showdata, updateByEmail, deleteByEmail} = require('../controllers/userController')
 router.post('/login', login)
 router.post('/register', register)
 router.get('/showdata', protect,showdata)

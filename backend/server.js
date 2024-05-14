@@ -3,8 +3,8 @@ import cors from "cors"
 // const colors = require('colors')
 import { connectDB }  from "./config/db.js"
 import router from "./route/productosRoutes.js";
+import errorHandler from "./middleware/errorMiddleware.js";
 // const dotenv = require('dotenv').config()
-// const {errorHandler} = require('./middleware/errorMiddleware')
 
 connectDB();
 
@@ -19,11 +19,11 @@ app.use(express.urlencoded({extended: false}))
 // api endpoint
 app.use('/api/producto',router)
 app.use("/images", express.static('uploads')) 
-// app.use('/api/users', require('./route/userRoutes'))
+app.use('/api/users', router)
 
 
 app.use(cors())
-//app.use(errorHandler)
+app.use(errorHandler)
 
 app.get("/",(req,res)=>{
     res.send("API working")

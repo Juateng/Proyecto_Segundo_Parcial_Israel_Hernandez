@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
-const asyncHandler = require('express-async-handler')
-const User = require('../models/userModel')
+import usersmodel from '../models/userModel.js'
+import asyncHandler from "express-async-handler"
 
 const protect = asyncHandler( async (req, res ,next) => {
     //obtenemos el token 
@@ -15,7 +15,7 @@ const protect = asyncHandler( async (req, res ,next) => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
             
             //obtener los datos del usuario del payload del token y lo vamos a poner en un objeto
-            req.user = await User.findById(decoded.idusuario).select('-password')
+            req.user = await usersmodel.findById(decoded.idusuario).select('-password')
 
             next()
 
@@ -33,6 +33,4 @@ const protect = asyncHandler( async (req, res ,next) => {
 
 })
 
-module.exports = {
-    protect
-}
+export default protect;
