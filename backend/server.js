@@ -17,7 +17,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 
 // api endpoint
-app.use('/api/producto',router)
+app.use('/api/productos',router)
 app.use("/images", express.static('uploads')) 
 app.use('/api/users', router)
 
