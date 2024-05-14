@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
+import mongoose, { mongo } from "mongoose";
 
-const producSchema = mongoose.Schema({
+const producSchema = new mongoose.Schema({
     nombre_producto: {
         type: String,
         required: [true, "Ingrese el nombre del producto"]
@@ -21,9 +21,16 @@ const producSchema = mongoose.Schema({
     fecha_lanzamiento: {
         type: String,
         required: [true, "Ingrese una fecha de lanzamiento en formato dd/mm/yy"]
+    },
+    image: {
+        type: String,
+        required: [true, "Ingrese la imagen a usar"]
     }
+
 },{
     timestamps: true
 })
   
-module.exports = mongoose.model('Producto', producSchema)
+const productosmodel = mongoose.models.Producto || mongoose.model("Producto", producSchema)
+
+export default productosmodel;

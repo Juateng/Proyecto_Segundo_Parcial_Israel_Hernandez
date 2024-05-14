@@ -1,22 +1,32 @@
-const express = require('express')
-const colors = require('colors')
-const connectDB = require('./config/db')
-const dotenv = require('dotenv').config()
-const {errorHandler} = require('./middleware/errorMiddleware')
+import express from "express" 
+import cors from "cors"
+// const colors = require('colors')
+import { connectDB }  from "./config/db.js"
+import router from "./route/productosRoutes.js";
+// const dotenv = require('dotenv').config()
+// const {errorHandler} = require('./middleware/errorMiddleware')
 
-connectDB()
+connectDB();
 
 const port = process.env.PORT || 5000
      
 const app = express()
 
+//middleware
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 
-//coleccion producto y user
-app.use('/api/producto', require('./route/productosRoutes')) 
-app.use('/api/users', require('./route/userRoutes'))
+// api endpoint
+app.use('/api/producto',router)
+app.use("/images", express.static('uploads')) 
+// app.use('/api/users', require('./route/userRoutes'))
 
-app.use(errorHandler)
+
+app.use(cors())
+//app.use(errorHandler)
+
+app.get("/",(req,res)=>{
+    res.send("API working")
+})
 
 app.listen(port, () => console.log(`Servidor inicado en el puerto ${port}`))

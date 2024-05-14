@@ -1,11 +1,20 @@
-const asyncHandler = require('express-async-handler')
-const Producto = require('../models/productosModel')
 
+import asyncHandler from "express-async-handler"
+import productosmodel, * as Producto from '../models/productosModel.js';
+import fs from "fs"
+
+//mostrar productos
 const getProducto = asyncHandler(async (req, res) => {
-    const productos = await Producto.find();
-    res.status(200).json(productos);
+    try{
+        const productos = await productosmodel.find({});
+        res.json({success:true, data: productos})
+    }catch(error){
+        console.log(error);
+        res.json({success: false, message:"Error"})
+    }
 });
 
+//añadir producto
 const crearProducto = asyncHandler(async (req, res) => {
     if (!req.body.nombre_producto || !req.body.sku || !req.body.plataforma || !req.body.precio || !req.body.fecha_lanzamiento) {
         res.status(400);
@@ -13,22 +22,32 @@ const crearProducto = asyncHandler(async (req, res) => {
     }
 
     // Verificar si ya existe un producto con el mismo SKU
-    const existeProducto = await Producto.findOne({ sku: req.body.sku });
-    if (existeProducto) {
-        res.status(400);
-        throw new Error('Ya existe un producto con este SKU');
-    }
+    // const existeProducto = await Producto.findOne({ sku: req.body.sku });
+    // if (existeProducto) {
+    //     res.status(400);
+    //     throw new Error('Ya existe un producto con este SKU');
+    // }
 
+    let image_filename = `${req.file.filename}`;
     // Si no existe, crear el producto
-    const producto = await Producto.create({
+    const producto = new productosmodel({
         nombre_producto: req.body.nombre_producto,
         sku: req.body.sku,
         plataforma: req.body.plataforma,
         precio: req.body.precio,
-        fecha_lanzamiento: req.body.fecha_lanzamiento
+        fecha_lanzamiento: req.body.fecha_lanzamiento,
+        image: image_filename
     });
 
-    res.status(201).json(producto);
+    try{
+        await producto.save();
+        res.status(201).json({success:true, message:"producto añadido"});
+
+    }catch (error){
+        console.log(error)
+        res.json({success:false, message: "Error"})
+    }
+    
 });
 
 const updateProducto = asyncHandler(async (req, res) => {
@@ -66,10 +85,4 @@ const buscarPorSku = asyncHandler(async (req, res) => {
     res.status(200).json(producto);
 });
 
-module.exports = {
-    getProducto,
-    crearProducto,
-    updateProducto,
-    deleteProducto,
-    buscarPorSku
-}
+export {crearProducto, getProducto, updateProducto, deleteProducto, buscarPorSku}
