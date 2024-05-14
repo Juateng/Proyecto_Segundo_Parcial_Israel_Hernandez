@@ -18,6 +18,6 @@ const upload = multer({storage:storage})
 router.post("/add",upload.single("image"),crearProducto)
 router.get("/list",getProducto)
 //router.route('/').get(getProducto).post("/add",crearProducto)
-//router.route('/:sku').put(updateProducto).delete(deleteProducto).get(buscarPorSku)
+router.route('/:sku').put(updateProducto).delete(deleteProducto).get(buscarPorSku)
 
 export default router;
